@@ -1,138 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsive Calculator</title>
+    <title>Advanced Calculator</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <div class="calculator">
-        <h2 style="padding: 4px; text-align: center; color: white;">Calculator</h2>
-        <input type="number" id="display1" onclick="openKeyBoard(this)" placeholder="Enter first number">
-        <input type="text" id="opr1" onclick="openKeyBoard(this)" placeholder="Enter operation (+, -, *, /, %)">
-        <input type="number" id="display2" onclick="openKeyBoard(this)" placeholder="Enter second number">
-        <!-- <button class="equal" onclick="calculate()">=</button> -->
-        <div id="output" style="margin-top:5px;"></div>
+    <main class="calculator">
+        <h1>Advanced Calculator</h1>
+        <p class="subtitle">Tap an input to use the calculator keypad.</p>
+        <form id="calculator-form">
+            <label for="first-number">First number</label>
+            <input id="first-number" type="text" inputmode="none" placeholder="e.g. 25" readonly required autofocus>
+            <label for="operator">Operation</label>
+            <input id="operator" type="text" inputmode="none" placeholder="Choose an operation" readonly required aria-label="Operation">
+            <label for="second-number">Second number</label>
+            <input id="second-number" type="text" inputmode="none" placeholder="e.g. 10" readonly required>
+            <button type="submit">Calculate</button>
+        </form>
+        <section class="result" aria-live="polite"><span>Result</span><output id="result">—</output></section>
+    </main>
 
-        <div class="buttons" id="buttons" style="padding-top: 5px;">
-            <button>1</button>
-            <button>2</button> 
-            <button>3</button> 
-            <button>4</button> 
-            <button>5</button>
-            <button>6</button>
-            <button>7</button> 
-            <button>8</button> 
-            <button>9</button> 
-            <button>0</button> 
-            <button>.</button> 
-            <button>+</button> 
-            <button>-</button> 
-            <button>*</button> 
-            <button>/</button> 
-            <button class="equal" onclick="calculate()">=</button>
-        </div>
+    <div class="keypad-popup" id="keypad-popup" aria-hidden="true">
+        <div class="keypad-popup__backdrop" data-action="close"></div>
+        <section class="keypad-panel" role="dialog" aria-modal="true" aria-labelledby="keypad-title">
+            <div class="keypad-panel__header">
+                <h2 style="color: black;" id="keypad-title">Calculator keypad</h2><button class="close-button" type="button" data-action="close"
+                    aria-label="Close keypad">×</button>
+            </div>
+            <p class="active-field" id="active-field">First number</p>
+            <div class="keypad" aria-label="On-screen calculator keypad">
+                <button type="button" class="key key--clear" data-action="clear">AC</button><button type="button"
+                    class="key" data-action="sign">±</button><button type="button" class="key key--operation"
+                    data-value="%">%</button><button type="button" class="key key--operation" data-value="/">÷</button>
+                <button type="button" class="key" data-value="7">7</button><button type="button" class="key"
+                    data-value="8">8</button><button type="button" class="key" data-value="9">9</button><button
+                    type="button" class="key key--operation" data-value="*">×</button>
+                <button type="button" class="key" data-value="4">4</button><button type="button" class="key"
+                    data-value="5">5</button><button type="button" class="key" data-value="6">6</button><button
+                    type="button" class="key key--operation" data-value="-">−</button>
+                <button type="button" class="key" data-value="1">1</button><button type="button" class="key"
+                    data-value="2">2</button><button type="button" class="key" data-value="3">3</button><button
+                    type="button" class="key key--operation" data-value="+">+</button>
+                <button type="button" class="key" data-action="delete" aria-label="Delete last digit">⌫</button><button
+                    type="button" class="key" data-value="0">0</button><button type="button" class="key"
+                    data-value=".">.</button><button type="button" class="key key--done" data-action="done">Done</button>
+            </div>
+        </section>
     </div>
-
-    <script>
-        const output = document.getElementById("output");
-        let activeInput = null;
-
-        // Open the on-screen keyboard for the selected input
-        function openKeyBoard(input) {
-            activeInput = input;
-            document.getElementById("buttons").style.display = "grid";
-            activeInput.focus();
-        }
-
-        // Add keyboard button value to the active input
-        function addInput(val) {
-            if (!activeInput) return;
-
-            // Operation input
-            if (activeInput.id === "opr1") {
-                if (["+", "-", "*", "/", "%"].includes(val)) {
-                    activeInput.value = val;
-                }
-                return;
-            }
-
-            // Number inputs
-            if (activeInput.id === "display1" || activeInput.id === "display2") {
-                if (val === "." && activeInput.value.includes(".")) {
-                    return;
-                }
-
-                activeInput.value += val;
-            }
-        }
-
-        // Attach click events to all keyboard buttons
-        document.querySelectorAll("#buttons button").forEach(button => {
-            if (button.classList.contains("equal")) return;
-
-            button.addEventListener("click", function () {
-                addInput(this.innerText);
-            });
-        });
-
-        function calculate() {
-            const display1 = document.getElementById("display1").value;
-            const display2 = document.getElementById("display2").value;
-            const oper1 = document.getElementById("opr1").value;
-
-            if (display1 === "" || display2 === "") {
-                alert("Enter both numbers!");
-                return;
-            }
-
-            if (oper1 !== "+" && oper1 !== "-" && oper1 !== "*" && oper1 !== "/" && oper1 !== "%") {
-                alert("Use a valid operation!");
-                return;
-            }
-
-            const num1 = Number(display1);
-            const num2 = Number(display2);
-            let result;
-
-            switch (oper1) {
-                case "+":
-                    result = num1 + num2;
-                    break;
-
-                case "-":
-                    result = num1 - num2;
-                    break;
-
-                case "*":
-                    result = num1 * num2;
-                    break;
-
-                case "/":
-                    if (num2 === 0) {
-                        output.innerText = "Cannot divide by zero";
-                        return;
-                    }
-                    result = num1 / num2;
-                    break;
-
-                case "%":
-                    result = num1 % num2;
-                    break;
-
-                default:
-                    output.innerText = "NAN";
-                    return;
-            }
-
-            output.innerText = result;
-            document.getElementById('buttons').style.display = 'none';
-        }
-    </script>
-
+    <script src="script.js"></script>
 </body>
-
 </html>
